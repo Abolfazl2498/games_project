@@ -11,7 +11,7 @@ export interface Game {
   name: string;
   background_image: string;
   parent_platforms: { platform: Platform }[];
-  metacritic:number
+  metacritic: number;
 }
 interface FetchGamesResponse {
   count: number;
@@ -21,15 +21,33 @@ interface FetchGamesResponse {
 const useGame = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
+    setLoading(true);
     apiClient
       .get<FetchGamesResponse>("/games")
-      .then((res) => setGames(res.data.results))
-      .catch((err) => setError(err.message));
-  });
+      .then((res) => {
+        if (mounted) {
+          setGames(res.data.results);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (mounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
 
-  return { games, error };
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return { games, error, isLoading };
 };
 
 export default useGame;
