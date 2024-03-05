@@ -26,6 +26,7 @@ const useData = <T>(
           signal: controller.signal,
           ...requestConfig,
         })
+
         .then((res) => {
           setData(res.data.results);
           setLoading(false);
