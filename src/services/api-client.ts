@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 export interface FetchResponse<T> {
   count: number;
+  next: string;
   results: T[];
 }
 
@@ -19,8 +20,10 @@ class ApiClient<T> {
   }
 
   getAll = async (config: AxiosRequestConfig) => {
-    const res = await axiosInstance
-      .get<FetchResponse<T>>(this.endpoint, config);
+    const res = await axiosInstance.get<FetchResponse<T>>(
+      this.endpoint,
+      config
+    );
     return res.data;
   };
 }
